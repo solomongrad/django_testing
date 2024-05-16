@@ -55,9 +55,9 @@ def form_for_edit_comment():
 @pytest.fixture
 def comment(author, news, form_for_comment):
     return Comment.objects.create(
-         news=news,
-         author=author,
-         text=form_for_comment['text'],
+        news=news,
+        author=author,
+        text=form_for_comment['text'],
     )
 
 
@@ -69,13 +69,13 @@ def comment_id_for_args(comment):
 @pytest.fixture
 def posts_on_homepage():
     News.objects.bulk_create(
-            News(
-                title=f'Новость {index}',
-                text='Просто текст.',
-                date=datetime.today() - timedelta(days=index)
-            )
-            for index in range(settings.NEWS_COUNT_ON_HOME_PAGE + 1)
+        News(
+            title=f'Новость {index}',
+            text='Просто текст.',
+            date=datetime.today() - timedelta(days=index)
         )
+        for index in range(settings.NEWS_COUNT_ON_HOME_PAGE + 1)
+    )
 
 
 @pytest.fixture

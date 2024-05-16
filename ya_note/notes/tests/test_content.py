@@ -4,6 +4,7 @@ from django.urls import reverse
 
 from notes.forms import NoteForm
 
+
 @pytest.mark.parametrize(
     'parametrized_client, note_in_list',
     (
