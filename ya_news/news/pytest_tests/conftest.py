@@ -1,9 +1,9 @@
-import pytest
 from datetime import datetime, timedelta
 
 from django.conf import settings
 from django.test.client import Client
 from django.utils import timezone
+import pytest
 
 from news.models import Comment, News
 
@@ -38,11 +38,6 @@ def news():
 
 
 @pytest.fixture
-def news_id_for_args(news):
-    return (news.id,)
-
-
-@pytest.fixture
 def form_for_comment():
     return {'text': 'Текст комментария'}
 
@@ -62,12 +57,7 @@ def comment(author, news, form_for_comment):
 
 
 @pytest.fixture
-def comment_id_for_args(comment):
-    return (comment.pk,)
-
-
-@pytest.fixture
-def posts_on_homepage():
+def news_on_homepage():
     News.objects.bulk_create(
         News(
             title=f'Новость {index}',
@@ -79,12 +69,45 @@ def posts_on_homepage():
 
 
 @pytest.fixture
-def comments_for_post(author, news):
+def comments_for_news(author, news):
     for index in range(11):
         comment = Comment.objects.create(
             news=news,
             author=author,
             text=f'комментарий {index}',
         )
-        comment.created = timezone.now() + timedelta(days=index)
-        comment.save()
+
+
+@pytest.fixture
+def HOME_URL():
+    return ('news:home', None)
+
+
+@pytest.fixture
+def DETAIL_URL(news):
+    return ('news:detail', (news.id,))
+
+
+@pytest.fixture
+def EDIT_URL(comment):
+    return ('news:edit', (comment.id,))
+
+
+@pytest.fixture
+def DELETE_URL(comment):
+    return ('news:delete', (comment.id,))
+
+
+@pytest.fixture
+def LOGIN_URL():
+    return ('users:login', None)
+
+
+@pytest.fixture
+def LOGOUT_URL():
+    return ('users:logout', None)
+
+
+@pytest.fixture
+def SIGNUP_URL():
+    return ('users:signup', None)
