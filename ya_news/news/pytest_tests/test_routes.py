@@ -7,7 +7,7 @@ from pytest_django.asserts import assertRedirects
 
 @pytest.mark.django_db
 @pytest.mark.parametrize(
-    'URL, CLIENT, status_code',
+    'name, CLIENT, status_code',
     (
         (
             pytest.lazy_fixture('home_url'), pytest.lazy_fixture('client'),
@@ -46,8 +46,8 @@ from pytest_django.asserts import assertRedirects
         ),
     )
 )
-def test_pages_avaibility(URL, CLIENT, status_code):
-    url = reverse(URL[0], args=URL[1])
+def test_pages_avaibility(name, CLIENT, status_code):
+    url = reverse(name[0], args=name[1])
     response = CLIENT.get(url)
     assert response.status_code == status_code
 
