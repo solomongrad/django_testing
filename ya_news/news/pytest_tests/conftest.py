@@ -2,7 +2,6 @@ from datetime import datetime, timedelta
 
 from django.conf import settings
 from django.test.client import Client
-from django.utils import timezone
 import pytest
 
 from news.models import Comment, News
@@ -71,7 +70,7 @@ def news_on_homepage():
 @pytest.fixture
 def comments_for_news(author, news):
     for index in range(11):
-        comment = Comment.objects.create(
+        Comment.objects.create(
             news=news,
             author=author,
             text=f'комментарий {index}',
@@ -79,35 +78,35 @@ def comments_for_news(author, news):
 
 
 @pytest.fixture
-def HOME_URL():
+def home_url():
     return ('news:home', None)
 
 
 @pytest.fixture
-def DETAIL_URL(news):
+def detail_url(news):
     return ('news:detail', (news.id,))
 
 
 @pytest.fixture
-def EDIT_URL(comment):
+def edit_url(comment):
     return ('news:edit', (comment.id,))
 
 
 @pytest.fixture
-def DELETE_URL(comment):
+def delete_url(comment):
     return ('news:delete', (comment.id,))
 
 
 @pytest.fixture
-def LOGIN_URL():
+def login_url():
     return ('users:login', None)
 
 
 @pytest.fixture
-def LOGOUT_URL():
+def logout_url():
     return ('users:logout', None)
 
 
 @pytest.fixture
-def SIGNUP_URL():
+def signup_url():
     return ('users:signup', None)

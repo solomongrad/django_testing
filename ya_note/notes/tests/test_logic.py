@@ -22,7 +22,6 @@ class TestNotesCreation(TestCase):
             'slug': 'new-slug'
         }
 
-
     def test_user_can_create_note(self):
         self.client.force_login(self.author)
         url = reverse('notes:add')
@@ -35,7 +34,6 @@ class TestNotesCreation(TestCase):
         self.assertEqual(new_note.text, self.form_data['text'])
         self.assertEqual(new_note.slug, self.form_data['slug'])
         self.assertEqual(new_note.author, self.author)
-    
 
     def test_anonymous_user_cant_create_note(self):
         url = reverse('notes:add')
@@ -45,7 +43,6 @@ class TestNotesCreation(TestCase):
         self.assertRedirects(response, expected_url)
         self.assertEqual(Note.objects.count(), 0)
 
-    
     def test_empty_slug(self):
         self.client.force_login(self.author)
         url = reverse('notes:add')
@@ -59,7 +56,7 @@ class TestNotesCreation(TestCase):
 
 
 class TestNotesLogic(TestCase):
-    
+
     @classmethod
     def setUpTestData(cls):
         cls.author = User.objects.create(username='Автор')
@@ -76,7 +73,6 @@ class TestNotesLogic(TestCase):
             'slug': 'new-slug'
         }
 
-    
     def test_not_unique_slug(self):
         self.client.force_login(self.author)
         url = reverse('notes:add')
@@ -87,7 +83,6 @@ class TestNotesLogic(TestCase):
         )
         self.assertEqual(Note.objects.count(), 1)
 
-
     def test_author_can_edit_note(self):
         self.client.force_login(self.author)
         url = reverse('notes:edit', args=(self.note.slug,))
@@ -97,7 +92,6 @@ class TestNotesLogic(TestCase):
         self.assertEqual(edited_note.title, self.form_data['title'])
         self.assertEqual(edited_note.text, self.form_data['text'])
         self.assertEqual(edited_note.slug, self.form_data['slug'])
-
 
     def test_other_user_cant_edit_note(self):
         self.client.force_login(self.reader)

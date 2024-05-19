@@ -22,13 +22,11 @@ class TestRoutes(TestCase):
             author=cls.author,
         )
 
-
     def test_home_page(self):
         url = reverse('notes:home')
         response = self.client.get(url)
         self.assertEqual(response.status_code, HTTPStatus.OK)
 
-    
     def test_pages_availability_for_auth_user(self):
         self.client.force_login(self.author)
         for name in ('notes:list', 'notes:success', 'notes:add'):
@@ -36,7 +34,6 @@ class TestRoutes(TestCase):
                 url = reverse(name)
                 response = self.client.get(url)
                 self.assertEqual(response.status_code, HTTPStatus.OK)
-
 
     def test_pages_availability_for_different_users(self):
         for user, status in ((self.author, HTTPStatus.OK),
@@ -47,7 +44,6 @@ class TestRoutes(TestCase):
                     url = reverse(name, args=(self.note.slug,))
                     response = self.client.get(url)
                     self.assertEqual(response.status_code, status)
-
 
     def test_redirect_for_anonymous_client(self):
         login_url = reverse('users:login')
@@ -64,7 +60,6 @@ class TestRoutes(TestCase):
                 redirect_url = f'{login_url}?next={url}'
                 response = self.client.get(url)
                 self.assertRedirects(response, redirect_url)
-
 
     def test_pages_availability_for_everyone(self):
         for name in ('users:signup', 'users:login', 'users:logout'):

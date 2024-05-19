@@ -21,7 +21,6 @@ class TestContent(TestCase):
             author=cls.author,
         )
 
-
     def test_notes_list_for_different_users(self):
         for user, note_in_list in ((self.author, True), (self.reader, False)):
             with self.subTest(user=user):
@@ -31,10 +30,10 @@ class TestContent(TestCase):
                 object_list = response.context['object_list']
                 self.assertEqual((self.note in object_list), note_in_list)
 
-
     def test_pages_contains_form(self):
         self.client.force_login(self.author)
-        for name, args in (('notes:add', None), ('notes:edit', (self.note.slug,))):
+        for name, args in (('notes:add', None),
+                           ('notes:edit', (self.note.slug,))):
             with self.subTest(name=name):
                 url = reverse(name, args=args)
                 response = self.client.get(url)
