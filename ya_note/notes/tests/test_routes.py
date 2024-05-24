@@ -66,7 +66,7 @@ class TestRoutes(TestCase):
                 else:
                     self.assertEqual(response.status_code,
                                      HTTPStatus.NOT_FOUND)
-    
+
     def test_pages_availability_for_anonymous_client(self):
         not_avaible = (self.DETAIL_URL, self.EDIT_URL, self.DELETE_URL,
                        self.LIST_URL, self.SUCCESS_URL, self.ADD_URL)

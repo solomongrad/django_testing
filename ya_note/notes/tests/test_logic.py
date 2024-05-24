@@ -41,7 +41,6 @@ class TestNotesLogic(TestCase):
         self.reader_client = Client()
         self.reader_client.force_login(self.reader)
 
-
     def test_user_can_create_note(self):
         url = self.ADD_URL
         Note.objects.all().delete()
@@ -79,7 +78,7 @@ class TestNotesLogic(TestCase):
         self.assertEqual(new_note.title, self.form_data['title'])
         self.assertEqual(new_note.text, self.form_data['text'])
         self.assertEqual(new_note.author, self.author)
-    
+
     def test_not_unique_slug(self):
         url = reverse('notes:add')
         self.form_data['slug'] = self.note.slug
