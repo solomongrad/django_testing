@@ -1,5 +1,4 @@
 from django.conf import settings
-from django.urls import reverse
 import pytest
 
 from news.forms import CommentForm
@@ -9,7 +8,7 @@ pytestmark = pytest.mark.django_db
 
 @pytest.mark.usefixtures('news_on_homepage')
 def test_num_of_news_on_homepage(client, home_url):
-    url = reverse(home_url[0])
+    url = home_url
     response = client.get(url)
     object_list = response.context['object_list']
     assert object_list.count() == settings.NEWS_COUNT_ON_HOME_PAGE
@@ -17,7 +16,7 @@ def test_num_of_news_on_homepage(client, home_url):
 
 @pytest.mark.usefixtures('news_on_homepage')
 def test_ordering_news(client, home_url):
-    url = reverse(home_url[0])
+    url = home_url
     response = client.get(url)
     object_list = response.context['object_list']
     all_dates = [news.date for news in object_list]
@@ -34,13 +33,13 @@ def test_ordering_comments(news):
 
 
 def test_anonymous_client_has_no_form(client, detail_url):
-    url = reverse(detail_url[0], args=detail_url[1])
+    url = detail_url
     response = client.get(url)
     assert 'form' not in response.context
 
 
 def test_authorized_client_has_form(not_author_client, detail_url):
-    url = reverse(detail_url[0], args=detail_url[1])
+    url = detail_url
     response = not_author_client.get(url)
     assert 'form' in response.context
     assert isinstance(response.context['form'], CommentForm)

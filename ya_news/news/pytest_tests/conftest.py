@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 
 from django.conf import settings
 from django.test.client import Client
+from django.urls import reverse
 import pytest
 
 from news.models import Comment, News
@@ -79,34 +80,34 @@ def comments_for_news(author, news):
 
 @pytest.fixture
 def home_url():
-    return ('news:home', None)
+    return reverse('news:home')
 
 
 @pytest.fixture
 def detail_url(news):
-    return ('news:detail', (news.id,))
+    return reverse('news:detail', args=(news.id,))
 
 
 @pytest.fixture
 def edit_url(comment):
-    return ('news:edit', (comment.id,))
+    return reverse('news:edit', args=(comment.id,))
 
 
 @pytest.fixture
 def delete_url(comment):
-    return ('news:delete', (comment.id,))
+    return reverse('news:delete', args=(comment.id,))
 
 
 @pytest.fixture
 def login_url():
-    return ('users:login', None)
+    return reverse('users:login')
 
 
 @pytest.fixture
 def logout_url():
-    return ('users:logout', None)
+    return reverse('users:logout')
 
 
 @pytest.fixture
 def signup_url():
-    return ('users:signup', None)
+    return reverse('users:signup')

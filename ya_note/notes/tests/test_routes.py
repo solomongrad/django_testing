@@ -2,6 +2,7 @@ from http import HTTPStatus
 
 from django.contrib.auth import get_user_model
 from django.test import TestCase
+from django.test.client import Client
 from django.urls import reverse
 
 from notes.models import Note
@@ -21,52 +22,59 @@ class TestRoutes(TestCase):
             slug='note-slug',
             author=cls.author,
         )
+        cls.HOME_URL = reverse('notes:home')
+        cls.LIST_URL = reverse('notes:list')
+        cls.ADD_URL = reverse('notes:add')
+        cls.SUCCESS_URL = reverse('notes:success')
+        cls.LOGIN_URL = reverse('users:login')
+        cls.SIGNUP_URL = reverse('users:signup')
+        cls.LOGOUT_URL = reverse('users:logout')
+        cls.SLUG = cls.note.slug
+        cls.EDIT_URL = reverse('notes:edit', args=(cls.SLUG,))
+        cls.DETAIL_URL = reverse('notes:detail', args=(cls.SLUG,))
+        cls.DELETE_URL = reverse('notes:delete', args=(cls.SLUG,))
 
-    def test_home_page(self):
-        url = reverse('notes:home')
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, HTTPStatus.OK)
+    def setUp(self):
+        self.author_client = Client()
+        self.author_client.force_login(self.author)
+        self.reader_client = Client()
+        self.reader_client.force_login(self.reader)
+        self.urls_tuple = (self.EDIT_URL,
+                           self.DETAIL_URL,
+                           self.DELETE_URL,
+                           self.HOME_URL,
+                           self.LIST_URL,
+                           self.ADD_URL,
+                           self.SUCCESS_URL,
+                           self.LOGIN_URL,
+                           self.SIGNUP_URL,
+                           self.LOGOUT_URL,)
 
-    def test_pages_availability_for_auth_user(self):
-        self.client.force_login(self.author)
-        for name in ('notes:list', 'notes:success', 'notes:add'):
-            with self.subTest(user=self.author, name=name):
-                url = reverse(name)
-                response = self.client.get(url)
+    def test_pages_availability_for_author(self):
+        for name in self.urls_tuple:
+            with self.subTest(name=name):
+                response = self.author_client.get(name)
                 self.assertEqual(response.status_code, HTTPStatus.OK)
 
-    def test_pages_availability_for_different_users(self):
-        for user, status in ((self.author, HTTPStatus.OK),
-                             (self.reader, HTTPStatus.NOT_FOUND)):
-            self.client.force_login(user)
-            for name in ('notes:detail', 'notes:edit', 'notes:delete'):
-                with self.subTest(user=user, name=name):
-                    url = reverse(name, args=(self.note.slug,))
-                    response = self.client.get(url)
-                    self.assertEqual(response.status_code, status)
-
-    def test_redirect_for_anonymous_client(self):
-        login_url = reverse('users:login')
-        for name, args in (
-            ('notes:list', None),
-            ('notes:success', None),
-            ('notes:add', None),
-            ('notes:detail', (self.note.slug,)),
-            ('notes:edit', (self.note.slug,)),
-            ('notes:delete', (self.note.slug,))
-        ):
+    def test_pages_availability_for_other_user(self):
+        not_avaible = (self.EDIT_URL, self.DETAIL_URL, self.DELETE_URL)
+        for name in self.urls_tuple:
             with self.subTest(name=name):
-                url = reverse(name, args=args)
-                redirect_url = f'{login_url}?next={url}'
-                response = self.client.get(url)
-                self.assertRedirects(response, redirect_url)
-
-    def test_pages_availability_for_everyone(self):
-        for name in ('users:signup', 'users:login', 'users:logout'):
-            for user in (self.reader, None):
-                with self.subTest(user=user, name=name):
-                    if user:
-                        self.client.force_login(user)
-                    url = reverse(name)
-                    response = self.client.get(url)
+                response = self.reader_client.get(name)
+                if name not in not_avaible:
                     self.assertEqual(response.status_code, HTTPStatus.OK)
+                else:
+                    self.assertEqual(response.status_code,
+                                     HTTPStatus.NOT_FOUND)
+    
+    def test_pages_availability_for_anonymous_client(self):
+        not_avaible = (self.DETAIL_URL, self.EDIT_URL, self.DELETE_URL,
+                       self.LIST_URL, self.SUCCESS_URL, self.ADD_URL)
+        for name in self.urls_tuple:
+            with self.subTest(name=name):
+                redirect_url = f'{self.LOGIN_URL}?next={name}'
+                response = self.client.get(name)
+                if name not in not_avaible:
+                    self.assertEqual(response.status_code, HTTPStatus.OK)
+                else:
+                    self.assertRedirects(response, redirect_url)
