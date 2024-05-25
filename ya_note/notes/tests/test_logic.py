@@ -98,7 +98,7 @@ class TestNotesLogic(TestCase):
         self.assertEqual(edited_note.title, self.form_data['title'])
         self.assertEqual(edited_note.text, self.form_data['text'])
         self.assertEqual(edited_note.slug, self.form_data['slug'])
-        self.assertEqual(edited_note.author, self.author)
+        self.assertEqual(edited_note.author, self.note.author)
 
     def test_other_user_cant_edit_note(self):
         url = reverse('notes:edit', args=(self.note.slug,))
@@ -109,14 +109,14 @@ class TestNotesLogic(TestCase):
         self.assertEqual(self.note.title, note_from_db.title)
         self.assertEqual(self.note.text, note_from_db.text)
         self.assertEqual(self.note.slug, note_from_db.slug)
-        self.assertEqual(self.note.author, self.author)
+        self.assertEqual(self.note.author, self.note.author)
 
     def test_author_can_delete_note(self):
         url = self.DELETE_URL
         notes_before = Note.objects.count()
         response = self.author_client.post(url)
         self.assertRedirects(response, reverse('notes:success'))
-        self.assertEqual((notes_before - Note.objects.count()), 1)
+        self.assertEqual((notes_before - 1), Note.objects.count())
 
     def test_other_user_cant_delete_note(self):
         url = self.DELETE_URL

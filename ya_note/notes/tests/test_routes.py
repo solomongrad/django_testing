@@ -68,13 +68,13 @@ class TestRoutes(TestCase):
                                      HTTPStatus.NOT_FOUND)
 
     def test_pages_availability_for_anonymous_client(self):
-        not_avaible = (self.DETAIL_URL, self.EDIT_URL, self.DELETE_URL,
-                       self.LIST_URL, self.SUCCESS_URL, self.ADD_URL)
+        avaible = (self.HOME_URL, self.LOGIN_URL, self.SIGNUP_URL,
+                   self.LOGOUT_URL)
         for name in self.urls_tuple:
             with self.subTest(name=name):
                 redirect_url = f'{self.LOGIN_URL}?next={name}'
                 response = self.client.get(name)
-                if name not in not_avaible:
-                    self.assertEqual(response.status_code, HTTPStatus.OK)
-                else:
+                if name not in avaible:
                     self.assertRedirects(response, redirect_url)
+                else:
+                    self.assertEqual(response.status_code, HTTPStatus.OK)

@@ -17,51 +17,26 @@ LOGOUT_URL = pytest.lazy_fixture('logout_url')
 
 SIGNUP_URL = pytest.lazy_fixture('signup_url')
 
+CLIENT = pytest.lazy_fixture('client')
+
+AUTHOR_CLIENT = pytest.lazy_fixture('author_client')
+
+NOT_AUTHOR_CLIENT = pytest.lazy_fixture('not_author_client')
+
 
 @pytest.mark.django_db
 @pytest.mark.parametrize(
     'name, user, status_code',
     (
-        (
-            HOME_URL, pytest.lazy_fixture('client'),
-            HTTPStatus.OK
-        ),
-        (
-            DETAIL_URL, pytest.lazy_fixture('client'),
-            HTTPStatus.OK
-        ),
-        (
-            LOGIN_URL, pytest.lazy_fixture('client'),
-            HTTPStatus.OK
-        ),
-        (
-            LOGOUT_URL, pytest.lazy_fixture('client'),
-            HTTPStatus.OK
-        ),
-        (
-            SIGNUP_URL, pytest.lazy_fixture('client'),
-            HTTPStatus.OK
-        ),
-        (
-            EDIT_URL,
-            pytest.lazy_fixture('author_client'),
-            HTTPStatus.OK
-        ),
-        (
-            EDIT_URL,
-            pytest.lazy_fixture('author_client'),
-            HTTPStatus.OK
-        ),
-        (
-            DELETE_URL,
-            pytest.lazy_fixture('author_client'),
-            HTTPStatus.OK
-        ),
-        (
-            DELETE_URL,
-            pytest.lazy_fixture('not_author_client'),
-            HTTPStatus.NOT_FOUND
-        ),
+        (HOME_URL, CLIENT, HTTPStatus.OK),
+        (DETAIL_URL, CLIENT, HTTPStatus.OK),
+        (LOGIN_URL, CLIENT, HTTPStatus.OK),
+        (LOGOUT_URL, CLIENT, HTTPStatus.OK),
+        (SIGNUP_URL, CLIENT, HTTPStatus.OK),
+        (EDIT_URL, AUTHOR_CLIENT, HTTPStatus.OK),
+        (EDIT_URL, AUTHOR_CLIENT, HTTPStatus.OK),
+        (DELETE_URL, AUTHOR_CLIENT, HTTPStatus.OK),
+        (DELETE_URL, NOT_AUTHOR_CLIENT, HTTPStatus.NOT_FOUND),
     )
 )
 def test_pages_avaibility(name, user, status_code):
